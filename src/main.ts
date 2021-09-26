@@ -1,6 +1,3 @@
-const msg = "HELLO";
-console.log(msg);
-
 window.addEventListener('load', () => {
     //    registerSW();
 });
@@ -23,11 +20,23 @@ let dirHandle: FileSystemDirectoryHandle;
 
 async function fileTest() {
     const bTest = document.getElementById('bTest') as HTMLButtonElement;
-    let fileHandle;
     bTest.addEventListener('click', async () => {
         //   [fileHandle] = await window.showOpenFilePicker();
         dirHandle = await window.showDirectoryPicker();
-        // Do something with the file handle.
+
+        const entries = dirHandle.entries();
+        for await (const [key, value] of entries) {
+            const name = value.name;    
+            console.log(name);
+            const lc = name.toLowerCase();
+            if (lc.endsWith('jpeg') || lc.endsWith('jpg') || lc.endsWith('png')) {
+                const imgHandle = await dirHandle.getFileHandle(name);
+                showImageFile(imgHandle);    
+            }
+            // // Try to display an image
+            // const imgHandle = await dirHandle.getFileHandle('test.jpg');
+            // showImageFile(imgHandle);
+        }
     });
 
 }
@@ -59,6 +68,21 @@ async function verifyPermission(fileHandle: FileSystemHandle, readWrite: boolean
     }
     // The user didn't grant permission, so return false.
     return false;
+}
+
+async function showImageFile(imgFile: FileSystemFileHandle) {
+    const fileData = await imgFile.getFile();
+    const src = URL.createObjectURL(fileData);
+    const divImages = document.getElementById("divImages");
+    const img = document.createElement("img");
+    img.width = 100;
+    img.height = 100;
+    img.src = src;
+    img.onclick = () => {
+        const imgEnlarged = document.getElementById("img") as HTMLImageElement;
+        imgEnlarged.src = src;
+    }
+    divImages?.appendChild(img);
 }
 
 fileTest();
