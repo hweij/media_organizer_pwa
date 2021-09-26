@@ -1,0 +1,6 @@
+/images/
+/node_modules/
+/build/
+*.js
+*.js.map
+*.tsbuildinfo
