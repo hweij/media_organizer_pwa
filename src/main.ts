@@ -106,6 +106,8 @@ async function processImageFile(imgFile: FileSystemFileHandle) {
         divImages?.appendChild(canvas);
         const ctx = canvas.getContext('2d');
         if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0, THUMB_SIZE, THUMB_SIZE);
             const imageData = ctx.getImageData(0, 0, THUMB_SIZE, THUMB_SIZE).data;
             // Convert tograyscale float
